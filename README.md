@@ -128,6 +128,16 @@ Objectifs :
 - protéger l'état interne de l'objet
 - empêcher les modifications incorrectes
 - rendre le code plus robuste
+  
+L’encapsulation en Python sert à :
+
+- protéger les données d’un objet
+- contrôler l’accès aux attributs
+- éviter les modifications incorrectes
+-  cacher les détails internes d’implémentation
+
+C’est un des principes fondamentaux de la programmation orientée objet (POO).
+
 
 ---
 
