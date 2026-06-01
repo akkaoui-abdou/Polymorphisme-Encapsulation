@@ -2,8 +2,10 @@
 
 ## Table des matières
 
-- [Polymorphisme](#polymorphisme)
-- [Encapsulation](#encapsulation)
+* [Polymorphisme](#polymorphisme)
+
+  * [Types de polymorphisme](#types-de-polymorphisme)
+* [Encapsulation](#encapsulation)
 
 ---
 
@@ -11,13 +13,14 @@
 
 ## Définition
 
-Le polymorphisme permet d'utiliser la même interface (même méthode ou fonction) pour des objets de types différents.
+Le polymorphisme permet d'utiliser une même interface (méthode ou fonction) pour manipuler différents types d'objets.
 
-Il rend le code :
+### Avantages
 
-- plus flexible
-- plus réutilisable
-- plus facile à maintenir
+* Réduction des conditions `if/elif`
+* Code plus flexible
+* Meilleure extensibilité
+* Réutilisation du code
 
 ---
 
@@ -47,41 +50,90 @@ Miaou
 
 ---
 
-## Polymorphisme avec héritage
+# Types de polymorphisme
+
+## 1. Polymorphisme d'inclusion (Héritage)
+
+Une sous-classe redéfinit une méthode héritée de la classe parent.
 
 ```python
-class Vehicule:
-    def deplacer(self):
-        print("Le véhicule se déplace")
+class Animal:
+    def parler(self):
+        print("Un animal fait un bruit")
 
-class Voiture(Vehicule):
-    def deplacer(self):
-        print("La voiture roule")
+class Chien(Animal):
+    def parler(self):
+        print("Wouf")
 
-class Avion(Vehicule):
-    def deplacer(self):
-        print("L'avion vole")
+class Chat(Animal):
+    def parler(self):
+        print("Miaou")
 
-vehicules = [Voiture(), Avion()]
+animaux = [Chien(), Chat()]
 
-for v in vehicules:
-    v.deplacer()
+for animal in animaux:
+    animal.parler()
 ```
 
 ### Résultat
 
 ```text
-La voiture roule
-L'avion vole
+Wouf
+Miaou
 ```
 
 ---
 
-## Duck Typing
+## 2. Polymorphisme ad hoc (Surcharge)
 
-Python utilise fortement le concept de Duck Typing :
+Python ne supporte pas directement la surcharge de méthodes comme Java ou C++, mais elle peut être simulée.
 
-> "Si ça ressemble à un canard et agit comme un canard, alors c'est un canard."
+```python
+class Calcul:
+    def addition(self, a, b, c=0):
+        return a + b + c
+
+calc = Calcul()
+
+print(calc.addition(2, 3))
+print(calc.addition(2, 3, 4))
+```
+
+### Résultat
+
+```text
+5
+9
+```
+
+---
+
+## 3. Polymorphisme paramétrique
+
+Une même fonction peut manipuler plusieurs types de données.
+
+```python
+def afficher(element):
+    print(element)
+
+afficher("Bonjour")
+afficher(100)
+afficher([1, 2, 3])
+```
+
+### Résultat
+
+```text
+Bonjour
+100
+[1, 2, 3]
+```
+
+---
+
+## 4. Polymorphisme par Duck Typing
+
+Python vérifie le comportement de l'objet plutôt que son type.
 
 ```python
 class PDF:
@@ -90,30 +142,66 @@ class PDF:
 
 class Image:
     def ouvrir(self):
-        print("Ouverture image")
+        print("Ouverture Image")
 
-def afficher(fichier):
-    fichier.ouvrir()
+def afficher_document(doc):
+    doc.ouvrir()
 
-afficher(PDF())
-afficher(Image())
+afficher_document(PDF())
+afficher_document(Image())
 ```
 
 ### Résultat
 
 ```text
 Ouverture PDF
-Ouverture image
+Ouverture Image
 ```
 
 ---
 
-## Avantages du polymorphisme
+## 5. Polymorphisme par surcharge d'opérateurs
 
-- Réduit les conditions `if/elif`
-- Facilite l'ajout de nouvelles classes
-- Rend le code plus propre
-- Favorise la réutilisation
+Les opérateurs peuvent être redéfinis grâce aux méthodes spéciales.
+
+```python
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __add__(self, autre):
+        return Point(
+            self.x + autre.x,
+            self.y + autre.y
+        )
+
+    def __str__(self):
+        return f"({self.x}, {self.y})"
+
+p1 = Point(2, 3)
+p2 = Point(4, 5)
+
+print(p1 + p2)
+```
+
+### Résultat
+
+```text
+(6, 8)
+```
+
+---
+
+## Résumé des types de polymorphisme
+
+| Type                   | Description                                |
+| ---------------------- | ------------------------------------------ |
+| Inclusion              | Redéfinition de méthodes via l'héritage    |
+| Ad hoc                 | Même opération avec différentes signatures |
+| Paramétrique           | Même code pour différents types            |
+| Duck Typing            | Basé sur les comportements de l'objet      |
+| Surcharge d'opérateurs | Personnalisation des opérateurs Python     |
 
 ---
 
@@ -125,19 +213,10 @@ L'encapsulation consiste à protéger les données d'un objet et à contrôler l
 
 Objectifs :
 
-- protéger l'état interne de l'objet
-- empêcher les modifications incorrectes
-- rendre le code plus robuste
-  
-L’encapsulation en Python sert à :
-
-- protéger les données d’un objet
-- contrôler l’accès aux attributs
-- éviter les modifications incorrectes
--  cacher les détails internes d’implémentation
-
-C’est un des principes fondamentaux de la programmation orientée objet (POO).
-
+* Masquer les détails internes
+* Préserver la cohérence des données
+* Contrôler les modifications
+* Faciliter la maintenance
 
 ---
 
@@ -160,8 +239,6 @@ print(c.solde)
 ```text
 -5000
 ```
-
-Le solde peut être modifié librement, même avec une valeur incohérente.
 
 ---
 
@@ -198,7 +275,7 @@ print(c.afficher_solde())
 
 ---
 
-## Niveaux d'accès en Python
+## Niveaux d'accès
 
 ### Public
 
@@ -208,17 +285,13 @@ self.nom
 
 Accessible partout.
 
----
-
-### Protégé (Convention)
+### Protégé
 
 ```python
 self._nom
 ```
 
-Accessible mais destiné à un usage interne.
-
----
+Convention indiquant un usage interne.
 
 ### Privé
 
@@ -226,17 +299,7 @@ Accessible mais destiné à un usage interne.
 self.__nom
 ```
 
-Python applique un mécanisme appelé **Name Mangling**.
-
-```python
-class Test:
-    def __init__(self):
-        self.__x = 10
-
-t = Test()
-
-# print(t.__x)  # Erreur
-```
+Protégé via le mécanisme de Name Mangling.
 
 ---
 
@@ -260,8 +323,6 @@ class Personne:
 ---
 
 ## Utilisation de @property
-
-Approche recommandée en Python.
 
 ```python
 class Personne:
@@ -292,22 +353,12 @@ print(p.age)
 
 ---
 
-## Avantages de l'encapsulation
+## Résumé final
 
-- Protection des données
-- Validation des modifications
-- Réduction des erreurs
-- Maintenance simplifiée
-- Meilleure évolutivité
-
----
-
-# Résumé
-
-| Concept | Objectif |
-|----------|-----------|
+| Concept       | Objectif                                           |
+| ------------- | -------------------------------------------------- |
 | Polymorphisme | Utiliser une même interface pour différents objets |
-| Encapsulation | Protéger les données et contrôler leur accès |
+| Encapsulation | Protéger les données et contrôler leur accès       |
 
 ### Exemple de polymorphisme
 
@@ -321,4 +372,4 @@ objet.methode()
 self.__attribut
 ```
 
-L'utilisation combinée du polymorphisme et de l'encapsulation permet de créer des applications plus robustes, maintenables et évolutives.
+Ces deux concepts sont essentiels pour construire des applications Python robustes, maintenables et évolutives.
