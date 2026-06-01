@@ -108,6 +108,250 @@ print(calc.addition(2, 3, 4))
 
 ---
 
+### Comprendre le polymorphisme ad hoc (Surcharge)
+
+Le polymorphisme **ad hoc** consiste à utiliser le même nom pour une opération, mais avec des comportements différents selon les arguments ou les types manipulés.
+
+Dans des langages comme Java ou C++, il est possible de définir plusieurs méthodes portant le même nom mais ayant des signatures différentes.
+
+#### Exemple en Java
+
+```java
+class Calcul {
+
+    int addition(int a, int b) {
+        return a + b;
+    }
+
+    double addition(double a, double b) {
+        return a + b;
+    }
+
+    int addition(int a, int b, int c) {
+        return a + b + c;
+    }
+}
+```
+
+Le compilateur choisit automatiquement la bonne méthode à appeler.
+
+---
+
+### Pourquoi Python est différent ?
+
+Python ne permet pas de définir plusieurs méthodes portant le même nom dans une même classe.
+
+```python
+class Calcul:
+
+    def addition(self, a, b):
+        return a + b
+
+    def addition(self, a, b, c):
+        return a + b + c
+```
+
+La deuxième définition remplace complètement la première.
+
+```python
+calc = Calcul()
+
+calc.addition(1, 2)
+```
+
+Résultat :
+
+```text
+TypeError: addition() missing 1 required positional argument: 'c'
+```
+
+---
+
+### Simuler la surcharge avec des arguments par défaut
+
+```python
+class Calcul:
+
+    def addition(self, a, b, c=0):
+        return a + b + c
+
+calc = Calcul()
+
+print(calc.addition(2, 3))
+print(calc.addition(2, 3, 4))
+```
+
+Résultat :
+
+```text
+5
+9
+```
+
+---
+
+### Simuler la surcharge avec *args
+
+```python
+class Calcul:
+
+    def addition(self, *args):
+        return sum(args)
+
+calc = Calcul()
+
+print(calc.addition(1, 2))
+print(calc.addition(1, 2, 3))
+print(calc.addition(1, 2, 3, 4))
+```
+
+Résultat :
+
+```text
+3
+6
+10
+```
+
+---
+
+### Adapter le comportement selon le type
+
+```python
+class Afficheur:
+
+    def afficher(self, valeur):
+
+        if isinstance(valeur, int):
+            print("Entier :", valeur)
+
+        elif isinstance(valeur, str):
+            print("Texte :", valeur)
+
+        elif isinstance(valeur, list):
+            print("Liste :", valeur)
+
+a = Afficheur()
+
+a.afficher(10)
+a.afficher("Bonjour")
+a.afficher([1, 2, 3])
+```
+
+Résultat :
+
+```text
+Entier : 10
+Texte : Bonjour
+Liste : [1, 2, 3]
+```
+
+---
+
+### Utiliser functools.singledispatch
+
+Python fournit un mécanisme officiel permettant de surcharger une fonction selon le type du premier argument.
+
+```python
+from functools import singledispatch
+
+@singledispatch
+def afficher(obj):
+    print("Type inconnu")
+
+@afficher.register
+def _(obj: int):
+    print("Entier :", obj)
+
+@afficher.register
+def _(obj: str):
+    print("Texte :", obj)
+
+afficher(10)
+afficher("Bonjour")
+```
+
+Résultat :
+
+```text
+Entier : 10
+Texte : Bonjour
+```
+
+---
+
+### La surcharge d'opérateurs : une forme de polymorphisme ad hoc
+
+Lorsque Python rencontre l'opérateur `+`, il exécute une méthode différente selon le type des objets.
+
+```python
+print(2 + 3)
+print("Bon" + "jour")
+print([1, 2] + [3, 4])
+```
+
+Résultat :
+
+```text
+5
+Bonjour
+[1, 2, 3, 4]
+```
+
+Le même opérateur possède donc plusieurs comportements.
+
+---
+
+### Différence avec le polymorphisme d'inclusion
+
+#### Polymorphisme ad hoc
+
+Le comportement dépend des arguments ou de leurs types.
+
+```python
+addition(2, 3)
+addition(2, 3, 4)
+```
+
+#### Polymorphisme d'inclusion
+
+Le comportement dépend de l'objet qui exécute la méthode.
+
+```python
+animal.parler()
+```
+
+Si `animal` est un `Chien` :
+
+```text
+Wouf
+```
+
+Si `animal` est un `Chat` :
+
+```text
+Miaou
+```
+
+---
+
+### À retenir
+
+Le polymorphisme ad hoc est généralement implémenté en Python grâce à :
+
+| Technique            | Utilisation                            |
+| -------------------- | -------------------------------------- |
+| Arguments par défaut | Simuler plusieurs signatures           |
+| *args                | Nombre variable d'arguments            |
+| **kwargs             | Paramètres nommés variables            |
+| isinstance()         | Comportement selon le type             |
+| singledispatch       | Surcharge officielle basée sur le type |
+| **add**, **eq**, ... | Surcharge d'opérateurs                 |
+
+Dans la pratique, les développeurs Python utilisent surtout les arguments par défaut, `*args` et la surcharge d'opérateurs.
+
+
+
 ## 3. Polymorphisme paramétrique
 
 Une même fonction peut manipuler plusieurs types de données.
